@@ -1,0 +1,462 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ExecuteMsg",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": [
+        "UpdateAdmins"
+      ],
+      "properties": {
+        "UpdateAdmins": {
+          "type": "object",
+          "required": [
+            "new_admins"
+          ],
+          "properties": {
+            "new_admins": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "UpdateExecutors"
+      ],
+      "properties": {
+        "UpdateExecutors": {
+          "type": "object",
+          "required": [
+            "new_executors"
+          ],
+          "properties": {
+            "new_executors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "CreateEntry"
+      ],
+      "properties": {
+        "CreateEntry": {
+          "type": "object",
+          "required": [
+            "assets",
+            "chain_id",
+            "chain_name"
+          ],
+          "properties": {
+            "assets": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Asset"
+              }
+            },
+            "chain_id": {
+              "type": "string"
+            },
+            "chain_name": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "UpdateEntry"
+      ],
+      "properties": {
+        "UpdateEntry": {
+          "type": "object",
+          "required": [
+            "assets",
+            "chain_id",
+            "chain_name"
+          ],
+          "properties": {
+            "assets": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Asset"
+              }
+            },
+            "chain_id": {
+              "type": "string"
+            },
+            "chain_name": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "DeleteEntry"
+      ],
+      "properties": {
+        "DeleteEntry": {
+          "type": "object",
+          "required": [
+            "chain_name"
+          ],
+          "properties": {
+            "chain_name": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  ],
+  "definitions": {
+    "Asset": {
+      "type": "object",
+      "required": [
+        "base"
+      ],
+      "properties": {
+        "address": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "admin": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "base": {
+          "type": "string"
+        },
+        "coingecko_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "denom_units": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/DenomUnit"
+          }
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "display": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ibc": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Ibc"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "images": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/Image"
+          }
+        },
+        "keywords": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "logo_uris": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/LogoUri"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "supply": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int64"
+        },
+        "symbol": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "traces": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/Trace"
+          }
+        },
+        "type_asset": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "Chain": {
+      "type": "object",
+      "required": [
+        "channel_id",
+        "path",
+        "port"
+      ],
+      "properties": {
+        "channel_id": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "port": {
+          "type": "string"
+        }
+      }
+    },
+    "Counterparty": {
+      "type": "object",
+      "required": [
+        "base_denom"
+      ],
+      "properties": {
+        "base_denom": {
+          "type": "string"
+        },
+        "base_supply": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int64"
+        },
+        "chain_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "chain_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "channel_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "contract": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "port": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "DenomUnit": {
+      "type": "object",
+      "required": [
+        "denom",
+        "exponent"
+      ],
+      "properties": {
+        "aliases": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "denom": {
+          "type": "string"
+        },
+        "exponent": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "Ibc": {
+      "type": "object",
+      "required": [
+        "dst_channel",
+        "source_channel",
+        "source_denom"
+      ],
+      "properties": {
+        "base_supply": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int64"
+        },
+        "dst_channel": {
+          "type": "string"
+        },
+        "source_channel": {
+          "type": "string"
+        },
+        "source_denom": {
+          "type": "string"
+        }
+      }
+    },
+    "Image": {
+      "type": "object",
+      "properties": {
+        "png": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "svg": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "theme": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Theme"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "LogoUri": {
+      "type": "object",
+      "properties": {
+        "png": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "svg": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "Theme": {
+      "type": "object",
+      "properties": {
+        "primary_color_hex": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "Trace": {
+      "type": "object",
+      "required": [
+        "counterparty",
+        "trace_type"
+      ],
+      "properties": {
+        "chain": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Chain"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "counterparty": {
+          "$ref": "#/definitions/Counterparty"
+        },
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "trace_type": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

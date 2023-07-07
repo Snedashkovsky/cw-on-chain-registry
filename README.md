@@ -1,1 +1,1 @@
-# cw-on-chain-registry
+# contracts for on-chain registry

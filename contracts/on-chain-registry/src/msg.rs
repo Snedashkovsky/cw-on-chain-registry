@@ -39,6 +39,7 @@ pub enum QueryMsg {
         limit: Option<u32>,
     },
     GetEntry { chain_name: String },
+    GetAsset { chain_name: String, base: String },
     Config {},
 }
 
@@ -50,6 +51,13 @@ pub struct EntryResponse {
     pub chain_name: String,
     pub chain_id: String,
     pub assets: Vec<Asset>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct AssetResponse {
+    pub chain_name: String,
+    pub chain_id: String,
+    pub asset: Asset,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]

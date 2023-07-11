@@ -47,6 +47,30 @@
     {
       "type": "object",
       "required": [
+        "get_asset"
+      ],
+      "properties": {
+        "get_asset": {
+          "type": "object",
+          "required": [
+            "base",
+            "chain_name"
+          ],
+          "properties": {
+            "base": {
+              "type": "string"
+            },
+            "chain_name": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
         "config"
       ],
       "properties": {

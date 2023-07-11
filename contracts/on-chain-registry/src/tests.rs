@@ -5,7 +5,7 @@ mod tests {
     use std::vec::Vec;
 
     use crate::state::{Asset, ChainData, CONFIG, Config};
-    use crate::msg::{ListResponse, QueryMsg, InstantiateMsg, ExecuteMsg};
+    use crate::msg::{ListResponse, AssetResponse, QueryMsg, InstantiateMsg, ExecuteMsg};
     use crate::contract::{query, execute, instantiate};
 
 
@@ -314,7 +314,7 @@ mod tests {
         // Query the list of entries
         let res = query(
             deps.as_ref(),
-            env,
+            env.clone(),
             QueryMsg::GetEntries {
                 limit: None,
             },
@@ -346,6 +346,42 @@ mod tests {
                         }]),
                 }]),
             list.entries
+        );
+        // Query the one asset
+        let res = query(
+            deps.as_ref(),
+            env.clone(),
+            QueryMsg::GetAsset {
+                chain_name: "cosmoshub".to_string(),
+                base: "uatom".to_string(),
+            },
+        )
+            .unwrap();
+        let asset: AssetResponse = from_binary(&res).unwrap();
+        assert_eq!(
+            "cosmoshub-4".to_string(),
+            asset.chain_id
+        );
+        assert_eq!(
+            Asset {
+                base: "uatom".to_string(),
+                type_asset: Some("sdk.coin".to_string()),
+                supply: Some(10000),
+                description: None,
+                denom_units: None,
+                address: None,
+                admin: None,
+                name: None,
+                display: None,
+                symbol: None,
+                traces: None,
+                ibc: None,
+                logo_uris: None,
+                images: None,
+                coingecko_id: None,
+                keywords: None,
+            },
+            asset.asset
         );
     }
 }

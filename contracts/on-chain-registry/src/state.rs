@@ -45,12 +45,12 @@ pub struct Counterparty {
     pub channel_id: Option<String>,
     pub chain_name: Option<String>,
     pub contract: Option<String>,
-    pub base_supply: Option<i64>
+    pub base_supply: Option<u128>
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct Chain {
-    pub port: String,
+    pub port: Option<String>,
     pub channel_id: String,
     pub path: String,
 }
@@ -68,7 +68,7 @@ pub struct Ibc {
     pub source_channel: String,
     pub dst_channel: String,
     pub source_denom: String,
-    pub base_supply: Option<i64>
+    pub base_supply: Option<u128>
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -93,7 +93,7 @@ pub struct Image {
 pub struct Asset {
     pub base: String,
     pub type_asset: Option<String>,
-    pub supply: Option<i64>,
+    pub supply: Option<u128>,
     pub description: Option<String>,
     pub denom_units: Option<Vec<DenomUnit>>,
     pub address: Option<String>,

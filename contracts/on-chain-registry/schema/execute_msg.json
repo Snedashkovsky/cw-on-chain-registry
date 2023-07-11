@@ -229,7 +229,8 @@
             "integer",
             "null"
           ],
-          "format": "int64"
+          "format": "uint128",
+          "minimum": 0.0
         },
         "symbol": {
           "type": [
@@ -258,8 +259,7 @@
       "type": "object",
       "required": [
         "channel_id",
-        "path",
-        "port"
+        "path"
       ],
       "properties": {
         "channel_id": {
@@ -269,7 +269,10 @@
           "type": "string"
         },
         "port": {
-          "type": "string"
+          "type": [
+            "string",
+            "null"
+          ]
         }
       }
     },
@@ -287,7 +290,8 @@
             "integer",
             "null"
           ],
-          "format": "int64"
+          "format": "uint128",
+          "minimum": 0.0
         },
         "chain_id": {
           "type": [
@@ -359,7 +363,8 @@
             "integer",
             "null"
           ],
-          "format": "int64"
+          "format": "uint128",
+          "minimum": 0.0
         },
         "dst_channel": {
           "type": "string"

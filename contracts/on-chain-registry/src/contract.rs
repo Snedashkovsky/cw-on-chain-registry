@@ -8,7 +8,7 @@ use cw2::{get_contract_version, set_contract_version};
 use crate::error::ContractError;
 use crate::execute::{execute_create_entry, execute_delete_entry, execute_update_entry, execute_update_admins, execute_update_executors};
 use crate::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
-use crate::query::{query_entry, query_list, query_config};
+use crate::query::{query_entry, query_asset, query_list, query_config};
 use crate::state::{Config, CONFIG};
 use crate::validating::{validate_map_addr};
 
@@ -71,6 +71,9 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
         }
         QueryMsg::GetEntry { chain_name } => {
             to_binary(&query_entry(deps, chain_name)?)
+        }
+        QueryMsg::GetAsset { chain_name , base} => {
+            to_binary(&query_asset(deps, chain_name, base)?)
         }
         QueryMsg::Config {} => to_binary(&query_config(deps)?),
     }

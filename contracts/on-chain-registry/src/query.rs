@@ -1,7 +1,7 @@
 use cosmwasm_std::{Deps, Order, StdResult};
 
-use crate::msg::{EntryResponse, ListResponse, ConfigResponse};
-use crate::state::{CHAINS, CONFIG};
+use crate::msg::{EntryResponse, ListResponse, AssetResponse, ConfigResponse};
+use crate::state::{Asset, CHAINS, CONFIG};
 
 const MAX_LIMIT: u32 = 30;
 const DEFAULT_LIMIT: u32 = 20;
@@ -13,6 +13,23 @@ pub fn query_entry(deps: Deps, chain_name: String) -> StdResult<EntryResponse> {
         chain_name,
         chain_id: entry.chain_id,
         assets: entry.assets
+    })
+}
+
+pub fn query_asset(deps: Deps, chain_name: String, base: String) -> StdResult<AssetResponse> {
+    let entry = CHAINS.load(deps.storage, &chain_name)?;
+
+    Ok(AssetResponse {
+        chain_name,
+        chain_id: entry.chain_id,
+        asset: entry.assets
+            .iter().
+            filter(|asset| asset.base.as_str() == base)
+            .cloned()
+            .collect::<Vec<Asset>>()
+            .first()
+            .cloned()
+            .unwrap()
     })
 }
 

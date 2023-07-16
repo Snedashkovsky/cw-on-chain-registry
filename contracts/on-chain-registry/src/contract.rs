@@ -6,9 +6,9 @@ use cosmwasm_std::entry_point;
 use cw2::{get_contract_version, set_contract_version};
 
 use crate::error::ContractError;
-use crate::execute::{execute_create_entry, execute_delete_entry, execute_update_entry, execute_update_admins, execute_update_executors};
+use crate::execute::{execute_create_assets, execute_delete_assets, execute_update_assets, execute_update_admins, execute_update_executors};
 use crate::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
-use crate::query::{query_entry, query_asset, query_list, query_config};
+use crate::query::{query_chain, query_asset, query_all_assets, query_config};
 use crate::state::{Config, CONFIG};
 use crate::validating::{validate_map_addr};
 
@@ -47,30 +47,27 @@ pub fn execute(
     match msg {
         ExecuteMsg::UpdateAdmins { new_admins } => execute_update_admins(deps, env, info, new_admins),
         ExecuteMsg::UpdateExecutors { new_executors } => execute_update_executors(deps, env, info, new_executors),
-        // ExecuteMsg::UpdateOwner { new_owner } => execute_update_owner(deps, env, info, new_owner),
-        ExecuteMsg::CreateEntry {
-            chain_name,
-            chain_id,
+        ExecuteMsg::CreateAssets {
             assets,
-        } => execute_create_entry(deps, info, chain_name, chain_id, assets),
-        ExecuteMsg::UpdateEntry {
-            chain_name,
-            chain_id,
+        } => execute_create_assets(deps, info, assets),
+        ExecuteMsg::UpdateAssets {
             assets,
-        } => execute_update_entry(deps, info, chain_name, chain_id, assets),
-        ExecuteMsg::DeleteEntry { chain_name } => execute_delete_entry(deps, info, chain_name),
+        } => execute_update_assets(deps, info, assets),
+        ExecuteMsg::DeleteAssets {
+            chain_name ,
+            bases
+        } => execute_delete_assets(deps, info, chain_name, bases),
     }
 }
-
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        QueryMsg::GetEntries { limit } => {
-            to_binary(&query_list(deps, limit)?)
+        QueryMsg::GetAllAssets { limit } => {
+            to_binary(&query_all_assets(deps, limit)?)
         }
-        QueryMsg::GetEntry { chain_name } => {
-            to_binary(&query_entry(deps, chain_name)?)
+        QueryMsg::GetChain { chain_name } => {
+            to_binary(&query_chain(deps, chain_name)?)
         }
         QueryMsg::GetAsset { chain_name , base} => {
             to_binary(&query_asset(deps, chain_name, base)?)

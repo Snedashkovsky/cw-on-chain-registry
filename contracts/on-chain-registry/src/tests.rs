@@ -4,7 +4,7 @@ mod tests {
     use cosmwasm_std::{attr, from_binary, Addr};
     use std::vec::Vec;
 
-    use crate::state::{Asset, ChainData, CONFIG, Config};
+    use crate::state::{Asset, CONFIG, Config};
     use crate::msg::{ListResponse, AssetResponse, QueryMsg, InstantiateMsg, ExecuteMsg};
     use crate::contract::{query, execute, instantiate};
 
@@ -66,7 +66,7 @@ mod tests {
     }
 
     #[test]
-    fn create_update_delete_entry() {
+    fn create_update_delete_assets() {
         let mut deps = mock_dependencies();
         let env = mock_env();
         let info = mock_info("creator", &[]);
@@ -78,11 +78,11 @@ mod tests {
         let res = instantiate(deps.as_mut(), env.clone(), info.clone(), msg).unwrap();
         assert_eq!(0, res.messages.len());
 
-        let msg = ExecuteMsg::CreateEntry {
-            chain_name: "osmosis".to_string(),
-            chain_id: "osmosis-1".to_string(),
+        let msg = ExecuteMsg::CreateAssets {
             assets: Vec::from([
                 Asset {
+                    chain_id: "osmosis-1".to_string(),
+                    chain_name: "osmosis".to_string(),
                     base: "uosmo".to_string(),
                     type_asset: Some("sdk.coin".to_string()),
                     supply: Some(1000),
@@ -106,16 +106,15 @@ mod tests {
         assert_eq!(
             res.attributes,
             vec![
-                attr("method", "execute_create_entry"),
-                attr("new_entry_id", "osmosis"),
+                attr("method", "execute_create_assets"),
             ]
         );
 
-        let msg = ExecuteMsg::CreateEntry {
-            chain_name: "cosmoshub".to_string(),
-            chain_id: "cosmoshub-4".to_string(),
+        let msg = ExecuteMsg::CreateAssets {
             assets: Vec::from([
                 Asset {
+                    chain_name: "cosmoshub".to_string(),
+                    chain_id: "cosmoshub-4".to_string(),
                     base: "uatom".to_string(),
                     type_asset: Some("sdk.coin".to_string()),
                     supply: Some(10000),
@@ -139,8 +138,7 @@ mod tests {
         assert_eq!(
             res.attributes,
             vec![
-                attr("method", "execute_create_entry"),
-                attr("new_entry_id", "cosmoshub"),
+                attr("method", "execute_create_assets"),
             ]
         );
 
@@ -148,7 +146,7 @@ mod tests {
         let res = query(
             deps.as_ref(),
             env.clone(),
-            QueryMsg::GetEntries {
+            QueryMsg::GetAllAssets {
                 limit: None,
             },
         )
@@ -157,60 +155,56 @@ mod tests {
         let list: ListResponse = from_binary(&res).unwrap();
         assert_eq!(
             Vec::from([
-                ChainData {
-                    chain_id: "cosmoshub-4".to_string(),
-                    assets: Vec::from([
-                        Asset {
-                            base: "uatom".to_string(),
-                            type_asset: Some("sdk.coin".to_string()),
-                            supply: Some(10000),
-                            description: None,
-                            denom_units: None,
-                            address: None,
-                            admin: None,
-                            name: None,
-                            display: None,
-                            symbol: None,
-                            traces: None,
-                            ibc: None,
-                            logo_uris: None,
-                            images: None,
-                            coingecko_id: None,
-                            keywords: None,
-                        }]),
-                },
-                ChainData {
-                    chain_id: "osmosis-1".to_string(),
-                    assets: Vec::from([
-                        Asset {
-                            base: "uosmo".to_string(),
-                            type_asset: Some("sdk.coin".to_string()),
-                            supply: Some(1000),
-                            description: None,
-                            denom_units: None,
-                            address: None,
-                            admin: None,
-                            name: None,
-                            display: None,
-                            symbol: None,
-                            traces: None,
-                            ibc: None,
-                            logo_uris: None,
-                            images: None,
-                            coingecko_id: None,
-                            keywords: None,
-                        }]),
-                },
-            ]),
+                          Asset {
+                              chain_name: "cosmoshub".to_string(),
+                              chain_id: "cosmoshub-4".to_string(),
+                              base: "uatom".to_string(),
+                              type_asset: Some("sdk.coin".to_string()),
+                              supply: Some(10000),
+                              description: None,
+                              denom_units: None,
+                              address: None,
+                              admin: None,
+                              name: None,
+                              display: None,
+                              symbol: None,
+                              traces: None,
+                              ibc: None,
+                              logo_uris: None,
+                              images: None,
+                              coingecko_id: None,
+                              keywords: None,
+                          },
+                          Asset {
+                              chain_name: "osmosis".to_string(),
+                              chain_id: "osmosis-1".to_string(),
+                              base: "uosmo".to_string(),
+                              type_asset: Some("sdk.coin".to_string()),
+                              supply: Some(1000),
+                              description: None,
+                              denom_units: None,
+                              address: None,
+                              admin: None,
+                              name: None,
+                              display: None,
+                              symbol: None,
+                              traces: None,
+                              ibc: None,
+                              logo_uris: None,
+                              images: None,
+                              coingecko_id: None,
+                              keywords: None,
+                          }],
+            ),
             list.entries
         );
-        //
-        // Update entry
-        let message = ExecuteMsg::UpdateEntry {
-            chain_name: "osmosis".to_string(),
-            chain_id: "osmosis-4".to_string(),
+
+        // Update assets
+        let message = ExecuteMsg::UpdateAssets {
             assets: Vec::from([
                 Asset {
+                    chain_name: "osmosis".to_string(),
+                    chain_id: "osmosis-1".to_string(),
                     base: "uosmo".to_string(),
                     type_asset: Some("sdk.coin".to_string()),
                     supply: Some(10000),
@@ -234,8 +228,7 @@ mod tests {
         assert_eq!(
             res.attributes,
             vec![
-                attr("method", "execute_update_entry"),
-                attr("updated_entry_id", "osmosis"),
+                attr("method", "execute_update_assets"),
             ]
         );
 
@@ -243,7 +236,7 @@ mod tests {
         let res = query(
             deps.as_ref(),
             env.clone(),
-            QueryMsg::GetEntries {
+            QueryMsg::GetAllAssets {
                 limit: None,
             },
         )
@@ -252,70 +245,66 @@ mod tests {
         let list: ListResponse = from_binary(&res).unwrap();
         assert_eq!(
             Vec::from([
-                ChainData {
+                Asset {
+                    chain_name: "cosmoshub".to_string(),
                     chain_id: "cosmoshub-4".to_string(),
-                    assets: Vec::from([
-                        Asset {
-                            base: "uatom".to_string(),
-                            type_asset: Some("sdk.coin".to_string()),
-                            supply: Some(10000),
-                            description: None,
-                            denom_units: None,
-                            address: None,
-                            admin: None,
-                            name: None,
-                            display: None,
-                            symbol: None,
-                            traces: None,
-                            ibc: None,
-                            logo_uris: None,
-                            images: None,
-                            coingecko_id: None,
-                            keywords: None,
-                        }]),
+                    base: "uatom".to_string(),
+                    type_asset: Some("sdk.coin".to_string()),
+                    supply: Some(10000),
+                    description: None,
+                    denom_units: None,
+                    address: None,
+                    admin: None,
+                    name: None,
+                    display: None,
+                    symbol: None,
+                    traces: None,
+                    ibc: None,
+                    logo_uris: None,
+                    images: None,
+                    coingecko_id: None,
+                    keywords: None,
                 },
-                ChainData {
-                    chain_id: "osmosis-4".to_string(),
-                    assets: Vec::from([
-                        Asset {
-                            base: "uosmo".to_string(),
-                            type_asset: Some("sdk.coin".to_string()),
-                            supply: Some(10000),
-                            description: None,
-                            denom_units: None,
-                            address: None,
-                            admin: None,
-                            name: None,
-                            display: None,
-                            symbol: None,
-                            traces: None,
-                            ibc: None,
-                            logo_uris: None,
-                            images: None,
-                            coingecko_id: None,
-                            keywords: None,
-                        }]),
+                Asset {
+                    chain_name: "osmosis".to_string(),
+                    chain_id: "osmosis-1".to_string(),
+                    base: "uosmo".to_string(),
+                    type_asset: Some("sdk.coin".to_string()),
+                    supply: Some(10000),
+                    description: None,
+                    denom_units: None,
+                    address: None,
+                    admin: None,
+                    name: None,
+                    display: None,
+                    symbol: None,
+                    traces: None,
+                    ibc: None,
+                    logo_uris: None,
+                    images: None,
+                    coingecko_id: None,
+                    keywords: None,
                 },
             ]),
             list.entries
         );
 
-        //Delete Entry
-        let message = ExecuteMsg::DeleteEntry { chain_name: "osmosis".to_string() };
+        //Delete Assets
+        let message = ExecuteMsg::DeleteAssets { chain_name: "osmosis".to_string(), bases: vec!["uosmo".to_string()] };
 
         let res = execute(deps.as_mut(), env.clone(), info, message).unwrap();
         assert_eq!(
             res.attributes,
             vec![
-                attr("method", "execute_delete_entry"),
-                attr("deleted_entry_id", "osmosis"),
+                attr("method", "execute_delete_assets"),
+                attr("deleted_assets_id", "osmosis"),
             ]
         );
         // Query the list of entries
         let res = query(
             deps.as_ref(),
             env.clone(),
-            QueryMsg::GetEntries {
+            QueryMsg::GetAllAssets {
                 limit: None,
             },
         )
@@ -323,27 +312,25 @@ mod tests {
         let list: ListResponse = from_binary(&res).unwrap();
         assert_eq!(
             Vec::from([
-                ChainData {
+                Asset {
+                    chain_name: "cosmoshub".to_string(),
                     chain_id: "cosmoshub-4".to_string(),
-                    assets: Vec::from([
-                        Asset {
-                            base: "uatom".to_string(),
-                            type_asset: Some("sdk.coin".to_string()),
-                            supply: Some(10000),
-                            description: None,
-                            denom_units: None,
-                            address: None,
-                            admin: None,
-                            name: None,
-                            display: None,
-                            symbol: None,
-                            traces: None,
-                            ibc: None,
-                            logo_uris: None,
-                            images: None,
-                            coingecko_id: None,
-                            keywords: None,
-                        }]),
+                    base: "uatom".to_string(),
+                    type_asset: Some("sdk.coin".to_string()),
+                    supply: Some(10000),
+                    description: None,
+                    denom_units: None,
+                    address: None,
+                    admin: None,
+                    name: None,
+                    display: None,
+                    symbol: None,
+                    traces: None,
+                    ibc: None,
+                    logo_uris: None,
+                    images: None,
+                    coingecko_id: None,
+                    keywords: None,
                 }]),
             list.entries
         );
@@ -360,10 +347,12 @@ mod tests {
         let asset: AssetResponse = from_binary(&res).unwrap();
         assert_eq!(
             "cosmoshub-4".to_string(),
-            asset.chain_id
+            asset.asset.chain_id
         );
         assert_eq!(
             Asset {
+                chain_name: "cosmoshub".to_string(),
+                chain_id: "cosmoshub-4".to_string(),
                 base: "uatom".to_string(),
                 type_asset: Some("sdk.coin".to_string()),
                 supply: Some(10000),

@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::state::{Asset, ChainData};
+use crate::state::{Asset};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {
@@ -17,28 +17,25 @@ pub enum ExecuteMsg {
     UpdateExecutors {
         new_executors: Vec<String>,
     },
-    CreateEntry {
-        chain_name: String,
-        chain_id: String,
+    CreateAssets {
         assets: Vec<Asset>,
     },
-    UpdateEntry {
-        chain_name: String,
-        chain_id: String,
+    UpdateAssets {
         assets: Vec<Asset>,
     },
-    DeleteEntry {
+    DeleteAssets {
         chain_name: String,
+        bases: Vec<String>
     },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
-    GetEntries {
+    GetAllAssets {
         limit: Option<u32>,
     },
-    GetEntry { chain_name: String },
+    GetChain { chain_name: String },
     GetAsset { chain_name: String, base: String },
     Config {},
 }
@@ -49,20 +46,18 @@ pub struct MigrateMsg {}
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct EntryResponse {
     pub chain_name: String,
-    pub chain_id: String,
     pub assets: Vec<Asset>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct AssetResponse {
     pub chain_name: String,
-    pub chain_id: String,
     pub asset: Asset,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct ListResponse {
-    pub entries: Vec<ChainData>,
+    pub entries: Vec<Asset>,
 }
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]

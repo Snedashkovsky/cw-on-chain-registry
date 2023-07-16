@@ -1,47 +1,48 @@
 use cosmwasm_std::{Deps, Order, StdResult};
 
 use crate::msg::{EntryResponse, ListResponse, AssetResponse, ConfigResponse};
-use crate::state::{Asset, CHAINS, CONFIG};
+use crate::state::{Asset, CONFIG, assets_data};
 
-const MAX_LIMIT: u32 = 30;
-const DEFAULT_LIMIT: u32 = 20;
+const MAX_LIMIT: u32 = 30000;
+const DEFAULT_LIMIT: u32 = 100;
 
-pub fn query_entry(deps: Deps, chain_name: String) -> StdResult<EntryResponse> {
-    let entry = CHAINS.load(deps.storage, &chain_name)?;
+pub fn query_chain(deps: Deps, chain_name: String) -> StdResult<EntryResponse> {
+    let entry = assets_data()
+        .idx
+        .chain_name
+        .prefix(chain_name.clone())
+        .range(deps.storage, None, None, Order::Ascending)
+        .map(|item| item.map(|(_, _asset)| _asset))
+        .collect::<StdResult<Vec<_>>>()?;
 
     Ok(EntryResponse {
         chain_name,
-        chain_id: entry.chain_id,
-        assets: entry.assets
+        assets: entry
     })
 }
 
 pub fn query_asset(deps: Deps, chain_name: String, base: String) -> StdResult<AssetResponse> {
-    let entry = CHAINS.load(deps.storage, &chain_name)?;
+    // let entry = CHAINS.load(deps.storage, &chain_name)?;
+
+    let entry = assets_data().load(deps.storage, &(chain_name.clone() + &base))?;
 
     Ok(AssetResponse {
         chain_name,
-        chain_id: entry.chain_id,
-        asset: entry.assets
-            .iter().
-            filter(|asset| asset.base.as_str() == base)
-            .cloned()
-            .collect::<Vec<Asset>>()
-            .first()
-            .cloned()
-            .unwrap()
+        asset: entry
     })
 }
 
-pub fn query_list(deps: Deps, limit: Option<u32>) -> StdResult<ListResponse> {
+pub fn query_all_assets(deps: Deps, limit: Option<u32>) -> StdResult<ListResponse> {
     let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
-    let entries: StdResult<Vec<_>> = CHAINS
-        .range(deps.storage, None, None, Order::Ascending)
-        .take(limit)
-        .collect();
+
+    let entries: Vec<Asset> = assets_data()
+            .range(deps.storage, None, None, Order::Ascending)
+            .take(limit)
+            .map(|item| item.map(|(_, _asset)| _asset))
+            .collect::<StdResult<Vec<_>>>()?;
 
     let result = ListResponse {
-        entries: entries?.into_iter().map(|l| l.1).collect(),
+        entries
     };
 
     Ok(result)

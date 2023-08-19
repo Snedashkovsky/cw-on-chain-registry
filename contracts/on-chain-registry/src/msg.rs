@@ -32,11 +32,20 @@ pub enum ExecuteMsg {
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
+    GetAsset {
+        chain_name: String,
+        base: String,
+    },
+    GetAssetsByChain {
+        chain_name: String,
+        limit: Option<u32>,
+        start_after_base: Option<String>,
+    },
     GetAllAssets {
         limit: Option<u32>,
+        start_from_chain_name: Option<String>,
+        start_after_base: Option<String>,
     },
-    GetChain { chain_name: String },
-    GetAsset { chain_name: String, base: String },
     Config {},
 }
 

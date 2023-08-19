@@ -111,6 +111,16 @@ pub struct Asset {
     pub keywords: Option<Vec<String>>,
 }
 
+pub fn get_asset_key(chain_name: String, base: String) -> String {
+    chain_name.clone() + &' '.to_string() + &base
+}
+
+impl Asset {
+    pub fn key(&self) -> String {
+        get_asset_key(self.chain_name.clone(), self.base.clone())
+    }
+}
+
 pub struct AssetIndexes<'a> {
     pub chain_name: MultiIndex<'a, String, Asset, String>,
     pub asset: UniqueIndex<'a, (String, String), Asset>,

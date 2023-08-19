@@ -148,6 +148,8 @@ mod tests {
             env.clone(),
             QueryMsg::GetAllAssets {
                 limit: None,
+                start_from_chain_name: None,
+                start_after_base: None,
             },
         )
             .unwrap();
@@ -238,6 +240,8 @@ mod tests {
             env.clone(),
             QueryMsg::GetAllAssets {
                 limit: None,
+                start_from_chain_name: None,
+                start_after_base: None,
             },
         )
             .unwrap();
@@ -306,6 +310,8 @@ mod tests {
             env.clone(),
             QueryMsg::GetAllAssets {
                 limit: None,
+                start_from_chain_name: None,
+                start_after_base: None,
             },
         )
             .unwrap();

@@ -3,7 +3,7 @@ use cosmwasm_std::{attr, Env};
 use cosmwasm_std::{DepsMut, MessageInfo, Response, StdResult};
 
 use crate::error::ContractError;
-use crate::state::{CONFIG, Asset, assets_data};
+use crate::state::{CONFIG, Asset, assets_data, get_asset_key};
 use crate::validating::{validate_by_basic_rule, validate_map_addr};
 
 pub fn execute_update_admins(
@@ -69,15 +69,14 @@ pub fn execute_create_assets(
         }
 
         // TODO add assets validation
-
         assets_data().update(
             deps.storage,
-            &(asset.chain_name.clone() + &asset.base),
+            &asset.key(),
             |old| match old {
                 Some(_) => Err(ContractError::EntryExist {
-                    val: asset.chain_name.clone() + &" ".to_string() + &asset.base
+                    val: asset.key()
                 }),
-                None => Ok(asset),
+                None => Ok(asset.clone()),
             },
         )?;
     }
@@ -113,7 +112,7 @@ pub fn execute_update_assets(
 
         assets_data().save(
             deps.storage,
-            &(asset.chain_name.clone() + &asset.base),
+            &asset.key(),
             &asset)?;
     }
 
@@ -141,7 +140,7 @@ pub fn execute_delete_assets(
     {
         assets_data().remove(
             deps.storage,
-            &(chain_name.clone() + &base),
+            &get_asset_key(chain_name.clone(), base),
         )?;
     }
 

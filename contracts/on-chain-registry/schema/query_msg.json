@@ -5,48 +5,6 @@
     {
       "type": "object",
       "required": [
-        "get_all_assets"
-      ],
-      "properties": {
-        "get_all_assets": {
-          "type": "object",
-          "properties": {
-            "limit": {
-              "type": [
-                "integer",
-                "null"
-              ],
-              "format": "uint32",
-              "minimum": 0.0
-            }
-          }
-        }
-      },
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "required": [
-        "get_chain"
-      ],
-      "properties": {
-        "get_chain": {
-          "type": "object",
-          "required": [
-            "chain_name"
-          ],
-          "properties": {
-            "chain_name": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "required": [
         "get_asset"
       ],
       "properties": {
@@ -62,6 +20,74 @@
             },
             "chain_name": {
               "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_assets_by_chain"
+      ],
+      "properties": {
+        "get_assets_by_chain": {
+          "type": "object",
+          "required": [
+            "chain_name"
+          ],
+          "properties": {
+            "chain_name": {
+              "type": "string"
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "uint32",
+              "minimum": 0.0
+            },
+            "start_after_base": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "get_all_assets"
+      ],
+      "properties": {
+        "get_all_assets": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "uint32",
+              "minimum": 0.0
+            },
+            "start_after_base": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "start_from_chain_name": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           }
         }

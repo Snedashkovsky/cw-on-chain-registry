@@ -8,12 +8,12 @@ use cw2::{get_contract_version, set_contract_version};
 use crate::error::ContractError;
 use crate::execute::{execute_create_assets, execute_delete_assets, execute_update_assets, execute_update_admins, execute_update_executors};
 use crate::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
-use crate::query::{query_chain, query_asset, query_all_assets, query_config};
+use crate::query::{query_assets_by_chain, query_asset, query_all_assets, query_config};
 use crate::state::{Config, CONFIG};
 use crate::validating::{validate_map_addr};
 
 const CONTRACT_NAME: &str = "on-chain-registry";
-const CONTRACT_VERSION: &str = "0.0.1";
+const CONTRACT_VERSION: &str = "0.0.2";
 
 
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -54,7 +54,7 @@ pub fn execute(
             assets,
         } => execute_update_assets(deps, info, assets),
         ExecuteMsg::DeleteAssets {
-            chain_name ,
+            chain_name,
             bases
         } => execute_delete_assets(deps, info, chain_name, bases),
     }
@@ -63,13 +63,13 @@ pub fn execute(
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        QueryMsg::GetAllAssets { limit } => {
-            to_binary(&query_all_assets(deps, limit)?)
+        QueryMsg::GetAllAssets { limit, start_from_chain_name, start_after_base } => {
+            to_binary(&query_all_assets(deps, limit, start_from_chain_name, start_after_base)?)
         }
-        QueryMsg::GetChain { chain_name } => {
-            to_binary(&query_chain(deps, chain_name)?)
+        QueryMsg::GetAssetsByChain { chain_name, limit, start_after_base } => {
+            to_binary(&query_assets_by_chain(deps, chain_name, limit, start_after_base)?)
         }
-        QueryMsg::GetAsset { chain_name , base} => {
+        QueryMsg::GetAsset { chain_name, base } => {
             to_binary(&query_asset(deps, chain_name, base)?)
         }
         QueryMsg::Config {} => to_binary(&query_config(deps)?),

@@ -6,9 +6,9 @@ use cosmwasm_std::entry_point;
 use cw2::{get_contract_version, set_contract_version};
 
 use crate::error::ContractError;
-use crate::execute::{execute_create_assets, execute_delete_assets, execute_update_assets, execute_update_admins, execute_update_executors};
+use crate::execute::{execute_create_assets, execute_delete_assets, execute_update_assets, execute_create_channels, execute_update_channels, execute_delete_channels, execute_update_admins, execute_update_executors};
 use crate::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
-use crate::query::{query_assets_by_chain, query_asset, query_all_assets, query_config};
+use crate::query::{query_assets_by_chain, query_asset, query_all_assets, query_channels_by_chain, query_channel, query_all_channels, query_config};
 use crate::state::{Config, CONFIG};
 use crate::validating::{validate_map_addr};
 
@@ -57,6 +57,16 @@ pub fn execute(
             chain_name,
             bases
         } => execute_delete_assets(deps, info, chain_name, bases),
+        ExecuteMsg::CreateChannels {
+            channels,
+        } => execute_create_channels(deps, info, channels),
+        ExecuteMsg::UpdateChannels {
+            channels,
+        } => execute_update_channels(deps, info, channels),
+        ExecuteMsg::DeleteChannels {
+            chain_name,
+            source_channels
+        } => execute_delete_channels(deps, info, chain_name, source_channels),
     }
 }
 
@@ -71,6 +81,15 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
         }
         QueryMsg::GetAsset { chain_name, base } => {
             to_binary(&query_asset(deps, chain_name, base)?)
+        }
+       QueryMsg::GetAllChannels { limit, start_from_chain_name, start_after_source_channel } => {
+            to_binary(&query_all_channels(deps, limit, start_from_chain_name, start_after_source_channel)?)
+        }
+        QueryMsg::GetChannelsByChain { chain_name, limit, start_after_source_channel } => {
+            to_binary(&query_channels_by_chain(deps, chain_name, limit, start_after_source_channel)?)
+        }
+        QueryMsg::GetChannels { chain_name, source_channel } => {
+            to_binary(&query_channel(deps, chain_name, source_channel)?)
         }
         QueryMsg::Config {} => to_binary(&query_config(deps)?),
     }

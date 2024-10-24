@@ -111,6 +111,15 @@ pub struct Asset {
     pub keywords: Option<Vec<String>>,
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct Channel {
+    pub chain_name: String,
+    pub chain_id: String,
+    pub source_channel: String,
+    pub dst_channel: String,
+    pub source_denom: String,
+}
+
 pub fn get_asset_key(chain_name: String, base: String) -> String {
     chain_name.clone() + &' '.to_string() + &base
 }
@@ -118,6 +127,44 @@ pub fn get_asset_key(chain_name: String, base: String) -> String {
 impl Asset {
     pub fn key(&self) -> String {
         get_asset_key(self.chain_name.clone(), self.base.clone())
+    }
+}
+
+pub struct ChannelIndexes<'a> {
+    pub chain_name: MultiIndex<'a, String, Channel, String>,
+    pub channel: UniqueIndex<'a, (String, String), Channel>,
+}
+
+impl<'a> IndexList<Channel> for ChannelIndexes<'a> {
+    fn get_indexes(&'_ self) -> Box<dyn Iterator<Item=&'_ dyn Index<Channel>> + '_> {
+        let v: Vec<&dyn Index<Channel>> = vec![&self.chain_name, &self.channel];
+        Box::new(v.into_iter())
+    }
+}
+
+pub fn channels_data<'a>() -> IndexedMap<'a, &'a str, Channel, ChannelIndexes<'a>> {
+    let indexes = ChannelIndexes {
+        chain_name: MultiIndex::new(
+            channel_chain_name_idx,
+            CHAINS_KEY,
+            "chains__chain_name",
+        ),
+        channel: UniqueIndex::new(|t| (t.source_channel.clone(), t.dst_channel.clone()), "chains__channel"),
+    };
+    IndexedMap::new(CHAINS_KEY, indexes)
+}
+
+pub fn channel_chain_name_idx(_pk: &[u8], d: &Channel) -> String {
+    d.source_channel.clone()
+}
+
+pub fn get_channel_key(chain_name: String, source_channel: String) -> String {
+    chain_name.clone() + &' '.to_string() + &source_channel
+}
+
+impl Channel {
+    pub fn key(&self) -> String {
+        get_channel_key(self.chain_name.clone(), self.source_channel.clone())
     }
 }
 

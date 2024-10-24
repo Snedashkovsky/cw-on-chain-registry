@@ -3,7 +3,7 @@ use cosmwasm_std::{attr, Env};
 use cosmwasm_std::{DepsMut, MessageInfo, Response, StdResult};
 
 use crate::error::ContractError;
-use crate::state::{CONFIG, Asset, assets_data, get_asset_key};
+use crate::state::{CONFIG, Asset, assets_data, get_asset_key, Channel, channels_data, get_channel_key};
 use crate::validating::{validate_by_basic_rule, validate_map_addr};
 
 pub fn execute_update_admins(
@@ -147,4 +147,106 @@ pub fn execute_delete_assets(
     Ok(Response::new()
         .add_attribute("method", "execute_delete_assets")
         .add_attribute("deleted_assets_id", chain_name.to_string()))
+}
+
+pub fn execute_create_channels(
+    deps: DepsMut,
+    info: MessageInfo,
+    channels: Vec<Channel>,
+) -> Result<Response, ContractError> {
+    let cfg = CONFIG.load(deps.storage)?;
+    if !cfg.can_execute(info.sender.as_ref()) {
+        return Err(ContractError::Unauthorized {});
+    }
+
+    for channel in channels
+    {
+        let validate_chain_name = validate_by_basic_rule(channel.chain_name.clone(), "chain_name".to_string());
+        if validate_chain_name.is_err() {
+            return validate_chain_name;
+        }
+
+        let validate_chain_id = validate_by_basic_rule(channel.chain_id.clone(), "chain_id".to_string());
+        if validate_chain_id.is_err() {
+            return validate_chain_id;
+        }
+
+        // TODO add channels validation
+        channels_data().update(
+            deps.storage,
+            &channel.key(),
+            |old| match old {
+                Some(_) => Err(ContractError::EntryExist {
+                    val: channel.key()
+                }),
+                None => Ok(channel.clone()),
+            },
+        )?;
+    }
+
+    Ok(Response::new()
+        .add_attribute("method", "execute_create_channels"))
+}
+
+pub fn execute_update_channels(
+    deps: DepsMut,
+    info: MessageInfo,
+    channels: Vec<Channel>,
+) -> Result<Response, ContractError> {
+    let cfg = CONFIG.load(deps.storage)?;
+    if !cfg.can_execute(info.sender.as_ref()) {
+        return Err(ContractError::Unauthorized {});
+    }
+
+    for channel in channels
+    {
+        let validate_chain_name = validate_by_basic_rule(channel.chain_name.clone(), "chain_name".to_string());
+        if validate_chain_name.is_err() {
+            return validate_chain_name;
+        }
+
+        let validate_chain_id = validate_by_basic_rule(channel.chain_id.clone(), "chain_id".to_string());
+        if validate_chain_id.is_err() {
+            return validate_chain_id;
+        }
+
+        // TODO add channels validation
+
+        channels_data().save(
+            deps.storage,
+            &channel.key(),
+            &channel)?;
+    }
+
+    Ok(Response::new()
+        .add_attribute("method", "execute_update_channels"))
+}
+
+pub fn execute_delete_channels(
+    deps: DepsMut,
+    info: MessageInfo,
+    chain_name: String,
+    source_channels: Vec<String>,
+) -> Result<Response, ContractError> {
+    let cfg = CONFIG.load(deps.storage)?;
+    if !cfg.can_execute(info.sender.as_ref()) {
+        return Err(ContractError::Unauthorized {});
+    }
+
+    let validate_chain_name = validate_by_basic_rule(chain_name.clone(), "chain_name".to_string());
+    if validate_chain_name.is_err() {
+        return validate_chain_name;
+    }
+
+    for source_channel in source_channels
+    {
+        channels_data().remove(
+            deps.storage,
+            &get_channel_key(chain_name.clone(), source_channel),
+        )?;
+    }
+
+    Ok(Response::new()
+        .add_attribute("method", "execute_delete_channels")
+        .add_attribute("deleted_channels_id", chain_name.to_string()))
 }

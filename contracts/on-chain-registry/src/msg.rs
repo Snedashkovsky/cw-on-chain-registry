@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::state::{Asset};
+use crate::state::{Asset, Channel};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {
@@ -27,6 +27,16 @@ pub enum ExecuteMsg {
         chain_name: String,
         bases: Vec<String>
     },
+    CreateChannels {
+        channels: Vec<Channel>,
+    },
+    UpdateChannels {
+        channels: Vec<Channel>,
+    },
+    DeleteChannels {
+        chain_name: String,
+        source_channels: Vec<String>
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -46,17 +56,25 @@ pub enum QueryMsg {
         start_from_chain_name: Option<String>,
         start_after_base: Option<String>,
     },
+    GetChannels {
+        chain_name: String,
+        source_channel: String,
+    },
+    GetChannelsByChain {
+        chain_name: String,
+        limit: Option<u32>,
+        start_after_source_channel: Option<String>,
+    },
+    GetAllChannels {
+        limit: Option<u32>,
+        start_from_chain_name: Option<String>,
+        start_after_source_channel: Option<String>,
+    },
     Config {},
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct MigrateMsg {}
-
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct EntryResponse {
-    pub chain_name: String,
-    pub assets: Vec<Asset>,
-}
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct AssetResponse {
@@ -65,8 +83,31 @@ pub struct AssetResponse {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct ListResponse {
+pub struct ChainAssetsResponse {
+    pub chain_name: String,
+    pub assets: Vec<Asset>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct ListAssetsResponse {
     pub entries: Vec<Asset>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct ChannelResponse {
+    pub chain_name: String,
+    pub channel: Channel,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct ChainChannelsResponse {
+    pub chain_name: String,
+    pub channels: Vec<Channel>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct ListChannelsResponse {
+    pub entries: Vec<Channel>,
 }
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]

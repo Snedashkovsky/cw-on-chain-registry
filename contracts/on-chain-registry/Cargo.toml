@@ -1,6 +1,6 @@
 [package]
 name = "on-chain-registry"
-version = "0.0.2"
+version = "0.1.0"
 authors = ["Serge Nedashkovsky <snedashkovsky@users.noreply.github.com>"]
 edition = "2018"
 
@@ -25,7 +25,7 @@ library = []
 optimize = """docker run --rm -v "$(pwd)":/code \
   --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/target \
   --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
-  cosmwasm/rust-optimizer:0.12.13
+  cosmwasm/rust-optimizer:0.14.0
 """
 
 [dependencies]

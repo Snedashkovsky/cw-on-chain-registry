@@ -5,7 +5,7 @@ mod tests {
     use std::vec::Vec;
 
     use crate::state::{Asset, CONFIG, Config};
-    use crate::msg::{ListResponse, AssetResponse, QueryMsg, InstantiateMsg, ExecuteMsg};
+    use crate::msg::{ListAssetsResponse, AssetResponse, QueryMsg, InstantiateMsg, ExecuteMsg};
     use crate::contract::{query, execute, instantiate};
 
 
@@ -154,7 +154,7 @@ mod tests {
         )
             .unwrap();
 
-        let list: ListResponse = from_binary(&res).unwrap();
+        let list: ListAssetsResponse = from_binary(&res).unwrap();
         assert_eq!(
             Vec::from([
                           Asset {
@@ -246,7 +246,7 @@ mod tests {
         )
             .unwrap();
 
-        let list: ListResponse = from_binary(&res).unwrap();
+        let list: ListAssetsResponse = from_binary(&res).unwrap();
         assert_eq!(
             Vec::from([
                 Asset {
@@ -315,7 +315,7 @@ mod tests {
             },
         )
             .unwrap();
-        let list: ListResponse = from_binary(&res).unwrap();
+        let list: ListAssetsResponse = from_binary(&res).unwrap();
         assert_eq!(
             Vec::from([
                 Asset {
